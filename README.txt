@@ -1,0 +1,16 @@
+READM
+
+Course: CS 400
+Semester: Fall 2019
+Project name: Social Network
+Team Members:
+1. Kang Fu, 001, kfu9@wisc.edu
+
+
+Which team members were on same xteam together?
+No
+
+Other notes or comments to the grader:
+
+[place any comments or notes that will help the grader here]
+
