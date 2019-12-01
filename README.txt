@@ -1,4 +1,4 @@
-READM
+README
 
 Course: CS 400
 Semester: Fall 2019
