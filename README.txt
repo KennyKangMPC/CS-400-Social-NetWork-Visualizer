@@ -5,7 +5,7 @@ Semester: Fall 2019
 Project name: Social Network
 Team Members:
 1. Kang Fu, 001, kfu9@wisc.edu
-
+2. Jamal Moussa, 002, jmoussa@wisc.edu
 
 Which team members were on same xteam together?
 No
