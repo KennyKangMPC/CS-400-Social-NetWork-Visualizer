@@ -1,0 +1,74 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+/*
+ * The stage is 1080 * 720
+ */
+ 
+
+ 
+ /*left vbox in the left of borderpane contains load and list of names*/
+ .vbox-left{
+ 	-fx-max-width: 135;
+ 	-fx-alignment: top-center;
+ }
+ 
+ /*load button at top of left vbox*/
+ .button-load{
+ 	-fx-max-width: 100;
+ 	-fx-max-height: 60;
+ 	-fx-padding: 0, 0, 0, 15;
+ }
+ 
+ /* names loaded at left vbox*/
+ .label-names{
+ 	-fx-padding: 2.5, 2.5, 2.5, 2.5;
+ 	-fx-max-height: 45;
+ 	-fx-max-width: 120;
+ }
+ 
+/* hbox in the center of borderpane contains several vboxes*/
+.hbox-big{
+	-fx-background-color: #FFFFFF;
+	-fx-max-width: 945; /*which is = 5*7*9*3 */
+}
+
+/*vboxName.getStyleClass().add("vbox"); number of vBox = log2(NumberOfTeam)*2-1 */
+/*width of vbox = 945/??? */
+/*center hboxes in every vbox */
+.vbox-big{
+	-fx-alignment: center;
+}
+
+/* small vbox in large vbox*/
+.vbox-small{
+	-fx-max-height: 60;
+	-fx-padding: 7.5;
+	-fx-border-style: solid;
+	-fx-alignment: center;
+}
+
+/*hbox for each team */
+.team{
+	-fx-alignment: center-right;
+	-fx-max-height: 18;
+	-fx-padding: 5, 0, 5, 0;
+}
+
+
+ 
+/* set bg color*/
+.root {
+	-fx-background-color: #DFB951;
+}
+
+/*center vboxes in the center of borderpane */
+/*root.getCenter().getStyleClass().add("borderpane"); */
+.borderpane{
+	-fx-alignment: center;
+	-fx-background-color: #FFFFFF;
+}
+
+.button-submit{
+ 	-fx-alignment: center;
+ 	-fx-max-height: 18;
+}
