@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Created-By: a-team 15: Kang Fu(kfu9@wisc.edu), you guys name
+Created-By: a-team 15: Kang Fu(kfu9@wisc.edu), Jamal Moussa(jmoussa@wisc.edu)
 Main-Class: application.Main
 
