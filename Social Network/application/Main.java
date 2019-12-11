@@ -77,7 +77,36 @@ public class Main extends Application {
 	 * 
 	 * @param user
 	 */
-	static void drawNode(String user) {
+	static void reCenterDraw(Person user) {
+		
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param isAdd
+	 * @param scX
+	 * @param scY
+	 * @param deX
+	 * @param deY
+	 */
+	static void drawEdge(boolean isAdd, double scX, double scY, double deX, double deY) {
+		if (isAdd) {
+			gc.setStroke(Color.BLUE);
+			gc.strokeLine(scX, scY, deX, deY);
+		} else {
+			gc.setStroke(Color.WHITE);
+			gc.strokeLine(scX, scY, deX, deY);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 */
+	static void drawNode(String user, boolean isAdd) {
+		double d = 80.0; // diameter of the circle
+		Person thisGuy = socialNetwork.graph.getAllVertices().get(user);
 		gc = canvas.getGraphicsContext2D();
 		canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			
@@ -88,14 +117,23 @@ public class Main extends Application {
 					double centerX = usName.getLayoutBounds().getCenterX();
 					double centerY = usName.getLayoutBounds().getCenterY();
 					
-					gc.setFill(Color.color(Math.random(), Math.random(), Math.random()));
-					gc.fillOval(e.getX(), e.getY(), 80, 80);
-					gc.setFill(Color.color(Math.random(), Math.random(), Math.random()));
-					gc.fillText(user, e.getX()+(40-centerX), e.getY()+(40-centerY));
-					
-					//TODO: Formatting
-					socialNetwork.graph.getAllVertices().get(user).setX(e.getX()+(40-centerX));
-					socialNetwork.graph.getAllVertices().get(user).setY(e.getY()+(40-centerY));
+					if (isAdd) {
+						gc.setFill(Color.color(Math.random(), Math.random(), Math.random()));
+						gc.fillOval(e.getX(), e.getY(), d, d);
+						gc.setFill(Color.color(Math.random(), Math.random(), Math.random()));
+						gc.fillText(user, e.getX()+(d/2-centerX), e.getY()+(d/2-centerY));
+						thisGuy.setX(e.getX()+(d/2-centerX));
+						thisGuy.setY(e.getY()+(d/2-centerY));
+					} else {
+						double pX = thisGuy.getX();
+						double pY = thisGuy.getY();
+						gc.setFill(Color.color(1.0, 1.0, 1.0));
+						gc.fillOval(pX-(d/2-centerX), pY-(d/2-centerY), d, d);
+						//gc.fillText(user, e.getX()+(d/2-centerX), e.getY()+(d/2-centerY));
+						for (Person friend: socialNetwork.graph.getAllVertices().get(user).getNeighbors()) {
+							Main.drawEdge(isAdd, friend.getX(), friend.getY(),thisGuy.getX(), thisGuy.getY());
+						}
+					}
 				}
 			}
 		});
@@ -179,6 +217,8 @@ public class Main extends Application {
 			} else {
 				if (isAdd) {
 					socialNetwork.addUser(user.getText());
+				} else if (isCenter) {
+					socialNetwork.setCenter(user.getText());
 				} else {
 					socialNetwork.removeUser(user.getText());
 				}
@@ -227,12 +267,15 @@ public class Main extends Application {
 		addUB.setStyle("-fx-background-color: MediumSeaGreen;" + "-fx-font-size: 10pt");
 
 		addUB.setOnAction(e -> {
-			if (isAdd) {
-				socialNetwork.addFriends(user1.getText(), user2.getText());
+			if (!this.checkInput(user1.getText()) || !this.checkInput(user2.getText())) {
+				this.alertMessage("Invalid Character");
 			} else {
-				socialNetwork.removeFriends(user1.getText(), user2.getText());
+				if (isAdd) {
+					socialNetwork.addFriends(user1.getText(), user2.getText());
+				} else {
+					socialNetwork.removeFriends(user1.getText(), user2.getText());
+				}
 			}
-
 		});
 
 		UIButtons.getChildren().addAll(addUB, user1, user2);
@@ -282,110 +325,6 @@ public class Main extends Application {
 	}
 
 	/**
-	 * Creates circles.
-	 * 
-	 * @param input - text for circle
-	 * @param x     - x coordinate
-	 * @param y     - y coordinate
-	 * @return Circle that was just created
-	 */
-	private Circle makeCircle(Text input, int x, int y) {
-		Circle circle = new Circle();
-		circle.setFill(Color.color(Math.random(), Math.random(), Math.random()));
-		final double PADDING = 10;
-		circle.setRadius(getWidth(input) / 2 + PADDING);
-		circle.setCenterX(x);
-		circle.setCenterY(y);
-		return circle;
-	}
-
-	/**
-	 * Creates labels for circles.
-	 * 
-	 * @param input - text for circle
-	 * @param x     - x coordinate
-	 * @param y     - y coordinate
-	 * @return Text that was created to circle
-	 */
-	private Text labelCircle(String input, double x, double y) {
-		Text text = new Text(input);
-		text.setBoundsType(TextBoundsType.VISUAL);
-		text.setStyle("-fx-font-family: \"Times New Roman\";" + "-fx-font-size: 24px;");
-		text.setX(x - 30);
-		text.setY(y + 5);
-		return text;
-	}
-
-	/**
-	 * Creates lines between circles.
-	 * 
-	 * @param circle1 - first circle to start line from
-	 * @param circle2 - second circle to end line
-	 * @return created line
-	 */
-	private Line makeLine(Circle circle1, Circle circle2) {
-		Line line = new Line();
-
-		// bind ends of line:
-		line.startXProperty().bind(circle1.centerXProperty().add(circle1.translateXProperty()));
-		line.startYProperty().bind(circle1.centerYProperty().add(circle1.translateYProperty()));
-		line.endXProperty().bind(circle2.centerXProperty().add(circle2.translateXProperty()));
-		line.endYProperty().bind(circle2.centerYProperty().add(circle2.translateYProperty()));
-
-		return line;
-	}
-
-	/**
-	 * Returns width of given Text.
-	 * 
-	 * @param text - given text
-	 * @return double value of the width of the text
-	 */
-	private double getWidth(Text text) {
-		new Scene(new Group(text));
-		text.applyCss();
-
-		return text.getLayoutBounds().getWidth();
-	}
-
-	/**
-	 * Hard coded visualizer of GUI. Creates text fields that are placed inside
-	 * circles and lines connecting users, representing friendships.
-	 */
-	private void hardCodeCircle() {
-		// creating labels
-		Text kenny = labelCircle("Kenny", 750, 200);
-		Text jamal = labelCircle("Jamal", 700, 400);
-		Text suraj = labelCircle("Suraj", 600, 500);
-		Text tejvir = labelCircle("Tejvir", 1000, 300);
-		Text michael = labelCircle("Michael", 900, 600);
-
-		// creating circles
-		Circle circle1 = makeCircle(kenny, 750, 200);
-		Circle circle2 = makeCircle(jamal, 700, 400);
-		Circle circle3 = makeCircle(suraj, 600, 500);
-		Circle circle4 = makeCircle(tejvir, 1000, 300);
-		Circle circle5 = makeCircle(michael, 900, 600);
-
-		// move circles so we can see them:
-		Line line1 = makeLine(circle1, circle2);
-		Line line2 = makeLine(circle1, circle3);
-		Line line3 = makeLine(circle1, circle4);
-		Line line4 = makeLine(circle1, circle5);
-
-		root.getChildren().addAll(line1, line2, line3, line4);
-
-		// grouping circle and text so they are displayed together
-		Group group1 = new Group(circle1, kenny);
-		Group group2 = new Group(circle2, jamal);
-		Group group3 = new Group(circle3, suraj);
-		Group group4 = new Group(circle4, tejvir);
-		Group group5 = new Group(circle5, michael);
-
-		root.getChildren().addAll(group1, group2, group3, group4, group5);
-	}
-
-	/**
 	 * This is an override class which is used to call the other method and start
 	 * generating the interface
 	 */
@@ -403,7 +342,6 @@ public class Main extends Application {
 		canvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 		root.getChildren().add(canvas);
 		Main.root.setLeft(this.LeftPanelUI());
-		//this.hardCodeCircle(); // TODO: Now is hard code
 		primaryStage.setTitle(APP_TITLE);
 		Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);

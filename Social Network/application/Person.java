@@ -32,6 +32,8 @@ public class Person {
 	private double positionY;
 	private boolean isCenter;
 	private List<Person> neighbors;
+	private boolean isVisited;
+	private int distance;
 
 	/**
 	 * Constructor
@@ -54,7 +56,9 @@ public class Person {
 		this.positionX = pX;
 		this.positionY = pY;
 		this.neighbors = new ArrayList<Person>();
-		this.isCenter = false; 
+		this.isCenter = false;
+		this.isVisited = false;
+		this.distance = 0;
 	}
 
 	/**
@@ -113,4 +117,22 @@ public class Person {
 	public List<Person> getNeighbors() {
 		return this.neighbors;
 	}
+	
+	public boolean getIsVisited() {
+		return this.isVisited;
+	}
+	
+	public void setIsVisited(boolean isVisited) {
+		this.isVisited = isVisited;
+	}
+	
+	public int getDistance() {
+		return this.distance;
+	}
+	
+	public void setDistance(int distance) {
+		this.distance = distance;
+	}
+	
+	
 }

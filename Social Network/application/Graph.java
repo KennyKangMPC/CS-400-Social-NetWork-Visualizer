@@ -171,4 +171,12 @@ public class Graph implements GraphADT {
 		return this.allUsers.get(vertex).getNeighbors();
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
+	public int size() {
+		return this.allUsers.size();
+	}
+	
 }
