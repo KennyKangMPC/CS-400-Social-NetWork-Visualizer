@@ -1,5 +1,7 @@
+package application;
+
 ///////////////////////////////////////////////////////////////////////////////
-//Assignment Name: Social Network A2
+//Assignment Name: Social Network A3
 //Author: A-Team 15
 //Member:
 //Kang Fu, 001, kfu9@wisc.edu
@@ -12,12 +14,11 @@
 //Known Bugs: None, to the best of my knowledge
 ///////////////////////////////////////////////////////////////////////////////
 
-package application;
-
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map.Entry;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -65,20 +66,13 @@ public class Main extends Application {
 	static BorderPane root = new BorderPane();
 	static Canvas canvas;
 	static GraphicsContext gc;
+	static ArrayList<double[]> mousePositions = new ArrayList<double[]>();
 
 	private void alertMessage(String message) {
 		Alert info = new Alert(AlertType.INFORMATION);
 		info.setTitle("WARNING");
 		info.setContentText(message);
 		info.showAndWait();
-	}
-	
-	/**
-	 * 
-	 * @param user
-	 */
-	static void reCenterDraw(Person user) {
-		
 	}
 	
 	/**
@@ -90,51 +84,109 @@ public class Main extends Application {
 	 * @param deX
 	 * @param deY
 	 */
-	static void drawEdge(boolean isAdd, double scX, double scY, double deX, double deY) {
+	static void drawEdge(boolean isAdd, Person scUser, Person deUser, boolean isRemoveU) {
+		double d = 80;
 		if (isAdd) {
 			gc.setStroke(Color.BLUE);
-			gc.strokeLine(scX, scY, deX, deY);
+			gc.strokeLine(deUser.getX(), deUser.getY(), scUser.getX(), scUser.getY());
 		} else {
 			gc.setStroke(Color.WHITE);
-			gc.strokeLine(scX, scY, deX, deY);
+			gc.setLineWidth(1.2);
+			gc.strokeLine(deUser.getX(), deUser.getY(), scUser.getX(), scUser.getY());
+			gc.setFill(Color.color(0, 0, 1));
+			if (!isRemoveU)
+				gc.fillOval(deUser.getX() - (d / 2 - deUser.getTextX()), deUser.getY() - (d / 2 - deUser.getTextY()), d, d);
+			
+			gc.fillOval(scUser.getX() - (d / 2 - scUser.getTextX()), scUser.getY() - (d / 2 - scUser.getTextY()), d, d);
+			gc.setFill(Color.color(1, 0, 0));
+			gc.fillText(scUser.getName(), scUser.getX(), scUser.getY());
+			if (!isRemoveU) 
+				gc.fillText(deUser.getName(), deUser.getX(), deUser.getY());
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param user
 	 */
-	static void drawNode(String user, boolean isAdd) {
+	static void reCenterDraw(Person user) {
+		
+	}
+
+	/**
+	 * 
+	 * @param user
+	 */
+	static void drawNode(Person thisGuy, boolean isAdd, boolean isRemoveUser) {
 		double d = 80.0; // diameter of the circle
-		Person thisGuy = socialNetwork.graph.getAllVertices().get(user);
+//		Person thisGuy = socialNetwork.graph.getAllVertices().get(user);
+		Text usName = new Text(thisGuy.getName());
+		double centerX = usName.getLayoutBounds().getCenterX();
+		double centerY = usName.getLayoutBounds().getCenterY();
+		thisGuy.setTextX(centerX);
+		thisGuy.setTextY(centerY);
+		
 		gc = canvas.getGraphicsContext2D();
-		canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-			
-			@Override
-			public void handle(MouseEvent e) {
-				if (e.getClickCount() > 1) {
-					Text usName = new Text(user);
-					double centerX = usName.getLayoutBounds().getCenterX();
-					double centerY = usName.getLayoutBounds().getCenterY();
-					
-					if (isAdd) {
-						gc.setFill(Color.color(Math.random(), Math.random(), Math.random()));
-						gc.fillOval(e.getX(), e.getY(), d, d);
-						gc.setFill(Color.color(Math.random(), Math.random(), Math.random()));
-						gc.fillText(user, e.getX()+(d/2-centerX), e.getY()+(d/2-centerY));
-						thisGuy.setX(e.getX()+(d/2-centerX));
-						thisGuy.setY(e.getY()+(d/2-centerY));
-					} else {
-						double pX = thisGuy.getX();
-						double pY = thisGuy.getY();
-						gc.setFill(Color.color(1.0, 1.0, 1.0));
-						gc.fillOval(pX-(d/2-centerX), pY-(d/2-centerY), d, d);
-						//gc.fillText(user, e.getX()+(d/2-centerX), e.getY()+(d/2-centerY));
-						for (Person friend: socialNetwork.graph.getAllVertices().get(user).getNeighbors()) {
-							Main.drawEdge(isAdd, friend.getX(), friend.getY(),thisGuy.getX(), thisGuy.getY());
+		if (isAdd) {
+			canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent e) {
+					if (e.getClickCount() > 1) {
+						if (thisGuy.getCount()) {
+							gc.setFill(Color.color(0, 0, 1)); // TODO: May generate random if have time
+							gc.fillOval(e.getX(), e.getY(), d, d);
+							gc.setFill(Color.color(1, 0, 0));
+							gc.fillText(thisGuy.getName(), e.getX() + (d / 2 - centerX), e.getY() + (d / 2 - centerY));
+							thisGuy.setX(e.getX() + (d / 2 - centerX));
+							thisGuy.setY(e.getY() + (d / 2 - centerY));
 						}
 					}
 				}
+			});
+		} else {
+			double pX = thisGuy.getX();
+			double pY = thisGuy.getY();
+			gc.setFill(Color.color(1.0, 1.0, 1.0));
+			gc.fillOval(pX - (d / 2 - centerX), pY - (d / 2 - centerY), d+1, d+1);
+			if (thisGuy.getNeighbors().size() != 0) {
+				for (Person friend : thisGuy.getNeighbors()) {
+					isRemoveUser = true;
+					Main.drawEdge(isAdd, friend, thisGuy, isRemoveUser);
+				}
+			}
+		}
+		clickOnNode(); // TODO: This one may remove place
+	}
+	
+	/**
+	 * 
+	 */
+	static void clickOnNode() {
+		gc = canvas.getGraphicsContext2D();
+
+		canvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent mouse) {
+				Stage centerStage = new Stage();
+				boolean isClicked = false;
+
+				for (Entry<String, Person> e : socialNetwork.graph.getAllVertices().entrySet()) {
+
+					double[] pos = { e.getValue().getX() + 40, e.getValue().getX() - 40, e.getValue().getY() + 40,
+							e.getValue().getY() - 40 };
+
+					mousePositions.add(pos);
+					for (int i = 0; i < mousePositions.size() - 1; i++) {
+						if ((mouse.getX() <= mousePositions.get(i)[0] && mouse.getX() >= mousePositions.get(i)[1])
+								&& (mouse.getY() <= mousePositions.get(i)[2]
+										&& mouse.getY() >= mousePositions.get(i)[3])) {
+							isClicked = true;
+							break;
+						}
+					}
+				}
+				
+				if (isClicked && mouse.getClickCount() == 1)
+					centerStage.show();
 			}
 		});
 	}
@@ -167,7 +219,7 @@ public class Main extends Application {
 					try {
 						socialNetwork.loadFromFile(selectedFile);
 					} catch (FileNotFoundException e1) {
-
+						
 					}
 				} else {
 					try {
@@ -217,8 +269,6 @@ public class Main extends Application {
 			} else {
 				if (isAdd) {
 					socialNetwork.addUser(user.getText());
-				} else if (isCenter) {
-					socialNetwork.setCenter(user.getText());
 				} else {
 					socialNetwork.removeUser(user.getText());
 				}
@@ -267,15 +317,12 @@ public class Main extends Application {
 		addUB.setStyle("-fx-background-color: MediumSeaGreen;" + "-fx-font-size: 10pt");
 
 		addUB.setOnAction(e -> {
-			if (!this.checkInput(user1.getText()) || !this.checkInput(user2.getText())) {
-				this.alertMessage("Invalid Character");
+			if (isAdd) {
+				socialNetwork.addFriends(user1.getText(), user2.getText());
 			} else {
-				if (isAdd) {
-					socialNetwork.addFriends(user1.getText(), user2.getText());
-				} else {
-					socialNetwork.removeFriends(user1.getText(), user2.getText());
-				}
+				socialNetwork.removeFriends(user1.getText(), user2.getText());
 			}
+
 		});
 
 		UIButtons.getChildren().addAll(addUB, user1, user2);
@@ -341,7 +388,9 @@ public class Main extends Application {
 
 		canvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
 		root.getChildren().add(canvas);
+
 		Main.root.setLeft(this.LeftPanelUI());
+		// this.hardCodeCircle(); // TODO: Now is hard code
 		primaryStage.setTitle(APP_TITLE);
 		Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 		primaryStage.setScene(scene);

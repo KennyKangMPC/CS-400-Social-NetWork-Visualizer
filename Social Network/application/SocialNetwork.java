@@ -51,10 +51,11 @@ public class SocialNetwork {
 	public boolean addFriends(String sc, String de) {
 		this.commandList.add("a " + sc + " " + de);
 		boolean isAdd = true;
+		boolean isRemoveUser = false;
 		graph.addEdge(sc, de);
 		Person scUser = this.graph.getAllVertices().get(sc);
 		Person deUser = this.graph.getAllVertices().get(de);
-		Main.drawEdge(isAdd, scUser.getX(), scUser.getY(), deUser.getX(), deUser.getY());
+		Main.drawEdge(isAdd, scUser, deUser, isRemoveUser);
 		return true;
 	}
 
@@ -68,10 +69,11 @@ public class SocialNetwork {
 	public boolean removeFriends(String sc, String de) {
 		this.commandList.add("r " + sc + " " + de);
 		boolean isAdd = false;
-		graph.addEdge(sc, de);
+		boolean isRemoveUser = false;
+		graph.removeEdge(sc, de);
 		Person scUser = this.graph.getAllVertices().get(sc);
 		Person deUser = this.graph.getAllVertices().get(de);
-		Main.drawEdge(isAdd, scUser.getX(), scUser.getY(), deUser.getX(), deUser.getY());
+		Main.drawEdge(isAdd, scUser, deUser, isRemoveUser);
 		return true;
 	}
 
@@ -82,10 +84,15 @@ public class SocialNetwork {
 	 * @return true if user is added into network, false if otherwise
 	 */
 	public boolean addUser(String user) {
+		if (this.graph.getAllVertices().containsKey(user)) {
+			return false;
+		}
 		boolean isAdd = true;
-		graph.addVertex(user);
+		boolean isRemoveUser = false;
 		this.commandList.add("a " + user);
-		Main.drawNode(user, isAdd);
+		graph.addVertex(user);
+		Person uPerson = this.graph.getAllVertices().get(user);
+		Main.drawNode(uPerson, isAdd, isRemoveUser);
 		return true;
 	}
 
@@ -97,9 +104,11 @@ public class SocialNetwork {
 	 */
 	public boolean removeUser(String user) {
 		boolean isAdd = false;
+		boolean isRemoveUser = false;
 		this.commandList.add("r " + user);
-		Main.drawNode(user, isAdd);
+		Person uPerson = this.graph.getAllVertices().get(user);
 		graph.removeVertex(user);
+		Main.drawNode(uPerson, isAdd, isRemoveUser);
 		return true;
 	}
 

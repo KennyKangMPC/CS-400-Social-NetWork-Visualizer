@@ -34,7 +34,10 @@ public class Person {
 	private List<Person> neighbors;
 	private boolean isVisited;
 	private int distance;
-
+	private int count;
+	private double textLengthX;
+	private double textLengthY;
+	
 	/**
 	 * Constructor
 	 *  
@@ -59,6 +62,9 @@ public class Person {
 		this.isCenter = false;
 		this.isVisited = false;
 		this.distance = 0;
+		this.count = 0;
+		this.textLengthX = 0;
+		this.textLengthY = 0;
 	}
 
 	/**
@@ -134,5 +140,27 @@ public class Person {
 		this.distance = distance;
 	}
 	
+	public boolean getCount() {
+		if (count == 0) {
+			this.count++;
+			return true;
+		}
+		return false;
+	}
 	
+	public void setTextX(double xL) {
+		this.textLengthX = xL;
+	}
+	
+	public double getTextX() {
+		return this.textLengthX;
+	}
+	
+	public void setTextY(double yL) {
+		this.textLengthY = yL;
+	}
+	
+	public double getTextY() {
+		return this.textLengthY;
+	}
 }

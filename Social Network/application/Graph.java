@@ -52,7 +52,7 @@ public class Graph implements GraphADT {
 			this.allUsers.put(vertex, new Person(vertex));
 		}
 	}
-
+	
 	/**
      * Remove a vertex and all associated 
      * edges from the graph.
@@ -70,10 +70,29 @@ public class Graph implements GraphADT {
 	public void removeVertex(String vertex) {
 		if ((vertex != null) && allUsers.containsKey(vertex)) {
 			this.allUsers.remove(vertex);
-			allUsers.forEach((k,v) -> this.removeEdge(k, vertex));
+			allUsers.forEach((k,v) -> this.removeEdgeS(k, vertex));
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @param v1
+	 * @param v2
+	 */
+	private void removeEdgeS(String v1, String v2) {
+		if (v1 != null && v2 != null && this.allUsers.containsKey(v1)) {
+			Person traker = this.getAllVertices().get(v1);
+			Person trakPerson = null;
+			for (Person nei : traker.getNeighbors()) {
+				if (nei.getName().equals(v2)) {
+					trakPerson = nei;
+					break;
+				}
+			}
+			traker.getNeighbors().remove(trakPerson);
+		}
+	}
+	
 	/**
      * Add the edge from vertex1 to vertex2
      * to this graph.  (edge is directed and unweighted)
@@ -92,8 +111,6 @@ public class Graph implements GraphADT {
 	 */
 	public void addEdge(String v1, String v2) {
 		if (v1 != null && v2 != null) {
-			this.addVertex(v1);
-			this.addVertex(v2);
 			boolean isIn1 = false;
 			boolean isIn2 = false;
 			
@@ -112,11 +129,11 @@ public class Graph implements GraphADT {
 			}
 
 			if (!isIn1) {
-				this.allUsers.get(v1).getNeighbors().add(new Person(v2));
+				this.allUsers.get(v1).getNeighbors().add(this.allUsers.get(v2));
 			}
 
 			if (!isIn2) {
-				this.allUsers.get(v2).getNeighbors().add(new Person(v1));
+				this.allUsers.get(v2).getNeighbors().add(this.allUsers.get(v1));
 			}
 		}
 	}
@@ -142,8 +159,10 @@ public class Graph implements GraphADT {
 			this.allUsers.containsKey(v2) &&
 			this.allUsers.get(v1).getNeighbors().contains(this.allUsers.get(v2)) &&
 			this.allUsers.get(v2).getNeighbors().contains(this.allUsers.get(v1))){
-			this.allUsers.get(v1).getNeighbors().remove(this.allUsers.get(v2));
-			this.allUsers.get(v2).getNeighbors().remove(this.allUsers.get(v1));
+			Person v1U = this.allUsers.get(v1);
+			Person v2U = this.allUsers.get(v2);
+			v2U.getNeighbors().remove(v1U);
+			v1U.getNeighbors().remove(v2U);
 		}
 	}	
 	
