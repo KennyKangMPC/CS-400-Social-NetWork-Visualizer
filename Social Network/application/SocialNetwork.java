@@ -1,5 +1,18 @@
 ///////////////////////////////////////////////////////////////////////////////
-//Assignment Name: Social Network A2
+//Assignment Name: Social Network A3
+//Filename: Person
+//Author: A-Team 15
+//Member:
+//Kang Fu, 001, kfu9@wisc.edu
+//Jamal Moussa, 002, jmoussa@wisc.edu
+//Suraj Joottu, 001, sjoottu@wisc.edu
+//Tejvir Mann, 001, tsmann@wisc.edu
+//Michael Her, 002, mvher2@wisc.edu
+//Due Date: Dec 11, 2019
+//Other Source Credits: None
+//Known Bugs: None, to the best of my knowledge
+///////////////////////////////////////////////////////////////////////////////
+//Filename: SocialNetwork
 //Author: A-Team 15
 //Member:
 //Kang Fu, 001, kfu9@wisc.edu
@@ -25,14 +38,16 @@ import java.util.Queue;
 import java.util.Scanner;
 
 /**
- * Back end data structure for Bakla Network
+ * Back end data structure for Bakla Network. 
  * 
  * @author A-Team 15
  */
 public class SocialNetwork {
+	
 	// private fields
 	List<String> commandList;
 	Graph graph;
+	
 	/**
 	 * Default no argument constructor
 	 */
@@ -42,19 +57,33 @@ public class SocialNetwork {
 	}
 
 	/**
-	 * Adds a friendship between two users.
+	 * Adds a friendship between two users. Calls methods 
+	 * in the graph class in order to add it ot the graph
+	 * data structure. 
 	 * 
 	 * @param sc - first user in friendship
 	 * @param de - second user in friendship
 	 * @return true if friendship is added into network, false otherwise
 	 */
 	public boolean addFriends(String sc, String de) {
+	
+		//checks if the strings are valid. 
+		if (!this.graph.getAllVertices().containsKey(sc) || 
+				!this.graph.getAllVertices().containsKey(de)) {
+			return false;
+		}
+		
+		//adds to commandList
 		this.commandList.add("a " + sc + " " + de);
 		boolean isAdd = true;
 		boolean isRemoveUser = false;
 		graph.addEdge(sc, de);
+		
+		//gets the right friends from graph. 
 		Person scUser = this.graph.getAllVertices().get(sc);
 		Person deUser = this.graph.getAllVertices().get(de);
+		
+		//adds the user to the screen. 
 		Main.drawEdge(isAdd, scUser, deUser, isRemoveUser);
 		return true;
 	}
@@ -64,15 +93,26 @@ public class SocialNetwork {
 	 * 
 	 * @param sc - first user in friendship
 	 * @param de - second user in friendship
-	 * @return true if friendship is removed from network, false otherwise
+	 * @return true - if friendship is removed from network, false otherwise
 	 */
 	public boolean removeFriends(String sc, String de) {
+		//checks of the users are valid. 
+		if (!this.graph.getAllVertices().containsKey(sc) || 
+				!this.graph.getAllVertices().containsKey(de)) {
+			return false;
+		}
+		
+		//adds to the commandlist 
 		this.commandList.add("r " + sc + " " + de);
 		boolean isAdd = false;
 		boolean isRemoveUser = false;
+		
+		//removes the user from the graph. 
 		graph.removeEdge(sc, de);
 		Person scUser = this.graph.getAllVertices().get(sc);
 		Person deUser = this.graph.getAllVertices().get(de);
+		
+		//removes the user from the screen. 
 		Main.drawEdge(isAdd, scUser, deUser, isRemoveUser);
 		return true;
 	}
@@ -84,13 +124,22 @@ public class SocialNetwork {
 	 * @return true if user is added into network, false if otherwise
 	 */
 	public boolean addUser(String user) {
+		
+		//checks of the user is contained
 		if (this.graph.getAllVertices().containsKey(user)) {
-			return false;
+			return false; // warning, it is already in it
 		}
+		
+		//if the user is new, then it adds the command to 
+		//the command list/ 
 		boolean isAdd = true;
 		boolean isRemoveUser = false;
 		this.commandList.add("a " + user);
+		
+		//adds user to the graph structure
 		graph.addVertex(user);
+		
+		//adds the user to be added to the screen. 
 		Person uPerson = this.graph.getAllVertices().get(user);
 		Main.drawNode(uPerson, isAdd, isRemoveUser);
 		return true;
@@ -103,9 +152,18 @@ public class SocialNetwork {
 	 * @return true if user is removed from network, false otherwise
 	 */
 	public boolean removeUser(String user) {
-		boolean isAdd = false;
+		
+		//checks if the user is valid, and contained. 
+		if (!this.graph.getAllVertices().containsKey(user)) {
+			return false; 
+		}
+		
+		//commmand added to the commandList 
+		boolean isAdd = false;  
 		boolean isRemoveUser = false;
 		this.commandList.add("r " + user);
+		
+		//user removed from the screen. 
 		Person uPerson = this.graph.getAllVertices().get(user);
 		graph.removeVertex(user);
 		Main.drawNode(uPerson, isAdd, isRemoveUser);
@@ -116,11 +174,17 @@ public class SocialNetwork {
 	 * Sets a new user to be the center of the visualizer. With the new center user,
 	 * all of their friendships are shown.
 	 * 
+	 * In the case that the user/friend is selected to become the main friend. 
+	 * 
 	 * @param user - user to be set as center of visualizer
-	 * @return true if user is set as center of visualizer, false otherwise
+	 * @return true - if user is set as center of visualizer, false otherwise
 	 */
 	public boolean setCenter(String user) {
+		
+		//adds the command to the list 
 		this.commandList.add("s " + user);
+		
+		//changes the graph and sets the user to the center. 
 		Person centerUser = this.graph.getAllVertices().get(user);
 		Main.reCenterDraw(centerUser);
 		return false;
@@ -128,14 +192,22 @@ public class SocialNetwork {
 	
 	/**
 	 * 
+	 * This method gets all of the friends between two different
+	 * friends. It checks if the users are valid, then it 
+	 * gets all of the friends of both, then returns the ones 
+	 * that are in common. 
+	 * 
 	 * @param user1
 	 * @param user2
-	 * @return
+	 * @return p1Friends - the mutual friends between user1 and 2. 
 	 */
 	public List<Person> getMutualFriends(String user1, String user2){
+		
+		//gets the Person vertex's based on the names stored and that match.
 		Person p1 = this.graph.getAllVertices().get(user1);
 		Person p2 = this.graph.getAllVertices().get(user2);
 		
+		//initializes the list of the friends/elements of both. 
 		List<Person> p1Friends = p1.getNeighbors();
 		List<Person> p2Friends = p2.getNeighbors();
 		
@@ -145,29 +217,37 @@ public class SocialNetwork {
 	}
 	
 	/**
+	 * This moethod gets the depth first algorithm. Based on the person
+	 * and the arraylist c, which contains all of the person/users 
+	 * friends. It returns the correct order based on depth. 
 	 * 
-	 * @param p
-	 * @param c
+	 * @param Person p - the person that starts the DFS. 
+	 * @param ArrayList <person/ c - the list of friends of the person
 	 */
 	private void DFS(Person p, ArrayList<Person> c) {
-		p.setIsVisited(true);
-		c.add(p);
-		for (Person f : p.getNeighbors()) {
-			if (!f.getIsVisited()) {
-				DFS(f,c);
+		p.setIsVisited(true); //if visited, then sets to true. 
+		c.add(p); //adds the first person. 
+		for (Person f : p.getNeighbors()) { //goes through each neighbor. 
+			if (!f.getIsVisited()) { //if not visited then DFS. 
+				DFS(f,c); // the recursive algorithm. 
 			}
 		}
 	}
 	
 	/**
 	 * 
-	 * @return
+	 * This method returns a list of components. 
+	 * 
+	 * @return ArrayList components - 
 	 */
 	public List<ArrayList<Person>> getCComponentsList() {
 		List<ArrayList<Person>> components = new ArrayList<ArrayList<Person>> ();
+	
 		// Set all the nodes to be unvisited
 		graph.getAllVertices().forEach((k,v) -> v.setIsVisited(false));
 		
+		//Goes through and and does a DFS, adds all of the friends/elements
+		//for a specific element to the component list. 
 		for (Entry<String, Person> e : graph.getAllVertices().entrySet()) {
 			if (!e.getValue().getIsVisited()) {
 				ArrayList<Person> connected = new ArrayList<Person>();
@@ -179,15 +259,17 @@ public class SocialNetwork {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * Gets the size of the component list
+	 * @return int size. 
 	 */
 	public int getNumConnectedComponents() {
 		return this.getCComponentsList().size();
 	}
 	
 	/**
-	 * This is the method for giving the shortest path
+	 * This is the method for giving the shortest path 
+	 * using a Breath First Search. 
+	 * 
 	 * @param start
 	 * @param end
 	 * @param n
@@ -196,16 +278,22 @@ public class SocialNetwork {
 	private List<Person> minPathBFS(Person start, Person end, int n) {
 		// Set all to be unvisited
 		graph.getAllVertices().forEach((k,v) -> v.setIsVisited(false));
+		
+		//lists initialized
 		List<Person> visited = new ArrayList<Person>();
 		List<Person> shortestPath = new ArrayList<Person>();
 		List<ArrayList<Person>> allPath= new ArrayList<ArrayList<Person>>();
+		
+		//recursive call that returns path, the visited list, and 
+		//the starting and ending person for the shortest path. 
 		minPathBFS(allPath, visited, start, end);
-		if (allPath.size() == 0) {
-			return shortestPath; // this should be empty list, no path alaert
+		
+		if (allPath.size() == 0) {  //since 0 is the shorest distance. 
+			return shortestPath; // this should be empty list, no path alert
 		} else {
-			shortestPath = allPath.get(0);
+			shortestPath = allPath.get(0); //gets the distances. 
 			
-			for (List<Person> path : allPath) {
+			for (List<Person> path : allPath) { //if the path is the shortests
 				if (path.size() < shortestPath.size()) {
 					shortestPath = path;
 				}
@@ -213,43 +301,55 @@ public class SocialNetwork {
 		}
 		return shortestPath;
 	}
-	
+
+	/*
+	 * This is another method used in otder to get the shortest path. This method
+	 * takes in the current person, and the last person, ass well as the current path. 
+	 * 
+	 * @param allPath - the entire path in a list
+	 * @param visited - the current list of visited nodes.
+	 * @param current - the current person
+	 * @param end - the last person.
+	 */
 	private void minPathBFS(List<ArrayList<Person>> allPath, List<Person> visited, Person current, Person end){
-        if(visited.contains(current)){
-            return ;
+        if(visited.contains(current)){ //this means that the search is over. 
+            return ; 
         }
         
-        if(end.equals(current)){
+        if(end.equals(current)){ //adds each of the people visited to the path. 
         	ArrayList<Person> path = new ArrayList<Person>();
             for(Person p : visited){
-            	path.add(p);
+            	path.add(p); //adds 
             }
-            path.add(end);
+            path.add(end); //adds the last person, returns. 
             allPath.add(path);
             return;
         }
         
-        visited.add(current);
+        visited.add(current); //adds all of the neighbors and moves along to the next list of people.
         for(Person child : current.getNeighbors()){
-        	minPathBFS(allPath, visited,child, end);
+        	minPathBFS(allPath, visited,child, end); //calls the method until the end is reached. 
         }
-        visited.remove(current);
-	}
+        visited.remove(current); //removes the current person from the visited list.
+	} 
 	
 	/**
-	 * Get the shortest path between the two users
+	 * Gets the shortest path between the two users. 
 	 * 
-	 * @param scUser
-	 * @param deUser
-	 * @return
+	 * @param scUser - one user 
+	 * @param deUser - the ending user. 
+	 * @return - the shortest list between two users. 
 	 */
 	public List<Person> getShortestPath(String scUser, String deUser){
+		//gets the person by looking through the vertices of the graph. 
 		Person scPerson = this.graph.getAllVertices().get(scUser);
 		Person dePerson = this.graph.getAllVertices().get(deUser);
-		int n = this.graph.size();
-		List<ArrayList<Person>> cComponents = this.getCComponentsList();
 		
-		for (ArrayList<Person> cList : cComponents) {
+		int n = this.graph.size(); //sets n to size. 
+		
+		List<ArrayList<Person>> cComponents = this.getCComponentsList(); //gets a list of components 
+		
+		for (ArrayList<Person> cList : cComponents) { //for every component, if its contained, then break. 
 			if (cList.contains(scPerson)) {
 				if (cList.contains(dePerson)) {
 					break;
@@ -270,35 +370,52 @@ public class SocialNetwork {
 	 * @throws FileNotFoundException 
 	 */
 	public void loadFromFile(File file) throws FileNotFoundException {
-		try (Scanner in = new Scanner(file)) {
-			while (in.hasNextLine()) {
-				String[] rows = in.nextLine().trim().split("[ ]+");
-				switch (rows[0]) {
-				case "a":
+		
+		try (Scanner in = new Scanner(file)) { //initializes scanner. 
+			while (in.hasNextLine()) { //while the file has next line.
+				String[] rows = in.nextLine().trim().split("[ ]+"); //clean up the file 
+				switch (rows[0]) {  //different cases
+				case "a": //checks the command, it true, then executes. 
 					if (rows.length == 3) {
-						this.addFriends(rows[1], rows[2]);
-					} else {
+						String message = "Under Control Panel within Add Friend, type " 
+								+ rows[1] + " in first text field and " 
+								+ rows[2] + " in second text field";
+						Main.alertMessage(message);  //implements command.
+						Main.addRemoveFriendShip(true);
+					} else {  
 						this.addUser(rows[1]);
+						String message = "Under Control Panel within Add, type " 
+								+ rows[1] + " in first text field";
+						Main.alertMessage(message); //implements command.
+						Main.addRemoveUserButton(true, false);
 					}
 					break;
-				case "r":
+				case "r":  //checks the command, it true, then executes. 
 					if (rows.length == 3) {
-						this.removeFriends(rows[1], rows[2]);
+						String message = "Under Control Panel within remove Friend, type " 
+								+ rows[1] + " in first text field and " 
+								+ rows[2] + " in second text field";
+						Main.alertMessage(message); //implements command.
+						Main.addRemoveFriendShip(false);
 					} else {
-						this.removeUser(rows[1]);
+						String message = "Under Control Panel within remove, type " 
+								+ rows[1] + " in first text field";
+						Main.alertMessage(message); //implements command.
+						Main.addRemoveUserButton(false, false);
 					}
 					break;
-				case "s":
+				case "s": //checks the command, it true, then executes. 
 					this.setCenter(rows[1]);
 					break;
 				default:
-					//TODO: Change too alert??
-					System.out.println("No such command");
+					System.out.println("No such command"); //when command doesn't match
 				}
 			}
 		}
 	}
-
+	
+	
+	
 	/**
 	 * Saves a .txt file with all of the instructions that the user did when using
 	 * the program
@@ -307,9 +424,11 @@ public class SocialNetwork {
 	 * @throws FileNotFoundException 
 	 */
 	public void saveToFile(File file) throws FileNotFoundException {
+		
+		//this initializes print writer to a file. 
 		try (PrintWriter writer = new PrintWriter(file.getAbsolutePath())) {
 			for (String row : this.commandList) {
-				writer.println(row);
+				writer.println(row); //prints each line in commandList.
 			}
 		}
 	}

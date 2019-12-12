@@ -1,5 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-//Assignment Name: Social Network A2
+//Assignment Name: Social Network A3
+//Filename: Person
 //Author: A-Team 15
 //Member:
 //Kang Fu, 001, kfu9@wisc.edu
@@ -7,10 +8,11 @@
 //Suraj Joottu, 001, sjoottu@wisc.edu
 //Tejvir Mann, 001, tsmann@wisc.edu
 //Michael Her, 002, mvher2@wisc.edu
-//Due Date: November 3, 2019
+//Due Date: Dec 11, 2019
 //Other Source Credits: None
 //Known Bugs: None, to the best of my knowledge
 ///////////////////////////////////////////////////////////////////////////////
+
 package application;
 
 import java.util.ArrayList;
@@ -24,8 +26,8 @@ import java.util.List;
  *
  */
 
-//TODO: May change them all the package level code
 public class Person {
+	
 	// private fields
 	private String name;
 	private double positionX;
@@ -44,7 +46,7 @@ public class Person {
 	 * @param name - Name of person to be created
 	 */
 	public Person(String name) {
-		this(name, 0, 0); // TODO: Get position based on canvas 
+		this(name, 0, 0); //gets position later. 
 	}
 
 	/**
@@ -56,7 +58,7 @@ public class Person {
 	 */
 	public Person(String name, double pX, double pY) {
 		this.name = name;
-		this.positionX = pX;
+		this.positionX = pX;  //all of the variables. 
 		this.positionY = pY;
 		this.neighbors = new ArrayList<Person>();
 		this.isCenter = false;
@@ -73,7 +75,7 @@ public class Person {
 	 * @return name of current person
 	 */
 	public String getName() {
-		return this.name;
+		return this.name; 
 	}
 
 	/**
@@ -112,34 +114,68 @@ public class Person {
 		this.positionY = pY;
 	}
 	
+	/**
+	 * Sets the center value for the 
+	 * person. 
+	 * 
+	 * @param isCenter - boolean if center or not. 
+	 */
 	public void setCenter(boolean isCenter) {
 		this.isCenter = isCenter;
 	}
 	
+	/*
+	 * Gets the center boolean. Either true of false. 
+	 */
 	public boolean getCenter() {
 		return this.isCenter;
 	}
 	
+	/*
+	 * Gets the list of friendships for a 
+	 * specific friend. Returns the list. 
+	 */
 	public List<Person> getNeighbors() {
 		return this.neighbors;
 	}
 	
+	/*
+	 * Gets the boolean to check if the 
+	 * person was visited. 
+	 */
 	public boolean getIsVisited() {
 		return this.isVisited;
 	}
 	
+	/*
+	 * Sets the boolean of of the 
+	 * friend and sees if its visited. 
+	 */
 	public void setIsVisited(boolean isVisited) {
 		this.isVisited = isVisited;
 	}
 	
+	/*
+	 * Gets the distance between two friends 
+	 * 
+	 * @retun int distance 
+	 */
 	public int getDistance() {
 		return this.distance;
 	}
 	
+	/*
+	 * Sets the distance between two friends. 
+	 * @return distance 
+	 */
 	public void setDistance(int distance) {
 		this.distance = distance;
 	}
 	
+	/*
+	 * Gets the count, if 0, then returns true
+	 * @return boolean true of false. 
+	 */
 	public boolean getCount() {
 		if (count == 0) {
 			this.count++;
@@ -148,18 +184,49 @@ public class Person {
 		return false;
 	}
 	
+	/*
+	 * Sets the count of the person to a specific 
+	 * int. 
+	 *
+	 * @param int c - the count. 
+	 */
+	public void setCount(int c) {
+		this.count = c;
+	}
+	
+	/*
+	 * Sets the text length based on the param 
+	 * for X.  
+	 * 
+	 * @param xL - the length of the param. 
+	 */
 	public void setTextX(double xL) {
 		this.textLengthX = xL;
 	}
 	
+	/*
+	 * Gets the text length for X
+	 * @return double textLengthX - the text length. 
+	 */
 	public double getTextX() {
 		return this.textLengthX;
 	}
 	
+	/*
+	 * Sets the text length based on the param 
+	 * for Y.  
+	 * 
+	 * @param yL - the length of the param. 
+	 */
 	public void setTextY(double yL) {
 		this.textLengthY = yL;
 	}
 	
+	/*
+	 * 
+	 * Gets the text length for X
+	 * @return double textLengthX - the text length. 
+	 */
 	public double getTextY() {
 		return this.textLengthY;
 	}
